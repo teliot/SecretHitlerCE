@@ -708,6 +708,9 @@ function onChat(messageIn, player)
 	elseif messageTable[1] == 'help' then
 		player:print(chatHelp(player.admin))
 		return false
+	elseif messageTable[1] == 'shuffle' then
+		shufflePlayers()
+		return false
 	end
 
 	for _, color in pairs(GREY_PLAYABLE_COLORS) do
@@ -3026,6 +3029,26 @@ function findUnusedColor()
 end
 
 function shufflePlayers()
+	local playingColors = getSeatedPlayers()
+	local playingIDs = {}
+	for i, v in pairs(playingColors) do
+		if (not options.shuffleHost and getPlayerObj(v).host) then
+			playingColors[i] = nil
+		  break
+		end
+		playingIDs[i] = Player[v].steam_id
+		Player[v].changeColor('Grey')
+	end
+
+	for i = #playingIDs, 2, -1 do
+		local j = math.random(i)
+		playingIDs[i], playingIDs[j] = playingIDs[i], playingIDs[j]
+	end
+
+	for i, v in pairs(playingIDs) do
+		getPlayerByNameSteamID(v, Player.getSpectators()).changeColor(playingColors[i])
+	end
+	--[[
 	local blackSteamId
 	if #getSeatedPlayers() == 10 and Player['Black'].seated then
 		blackSteamId = Player['Black'].steam_id
@@ -3097,6 +3120,7 @@ function shufflePlayers()
 			end
 		end
 	end
+	--]]
 end
 
 function notateColor2ByObject(tableIn)
