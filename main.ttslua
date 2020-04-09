@@ -3033,22 +3033,23 @@ function shufflePlayers()
 	local playingIDs = {}
 	for i, v in pairs(playingColors) do
 		if (not options.shuffleHost and getPlayerObj(v).host) then
-			playingColors[i] = nil
-		  break
-		end
-		playingIDs[i] = Player[v].steam_id
-		Player[v].changeColor('Grey')
-	end
+  		-- playingColors[i] = nil
+			table.remove(playingColors, i)
+  		break
+  	end
+ 		playingIDs[i] = Player[v].steam_id
+ 		Player[v].changeColor('Grey')
+ 	end
 
-	for i = #playingIDs, 2, -1 do
-		local j = math.random(i)
-		playingIDs[i], playingIDs[j] = playingIDs[i], playingIDs[j]
-	end
+ 	for i = #playingIDs, 2, -1 do
+ 		local j = math.random(i)
+ 		playingIDs[i], playingIDs[j] = playingIDs[i], playingIDs[j]
+ 	end
 
-	for i, v in pairs(playingIDs) do
-		getPlayerByNameSteamID(v, Player.getSpectators()).changeColor(playingColors[i])
-	end
-	--[[
+ 	for i, v in pairs(playingIDs) do
+ 		getPlayerByNameSteamID(v, Player.getSpectators()).changeColor(playingColors[i])
+ 	end
+ 	--[[
 	local blackSteamId
 	if #getSeatedPlayers() == 10 and Player['Black'].seated then
 		blackSteamId = Player['Black'].steam_id
