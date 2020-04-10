@@ -711,6 +711,9 @@ function onChat(messageIn, player)
 	elseif messageTable[1] == 'shuffle' then
 		shufflePlayers()
 		return false
+	elseif messageTable[1] == 'sit' then
+		sitPlayers()
+		return false
 	end
 
 	for _, color in pairs(GREY_PLAYABLE_COLORS) do
@@ -3028,23 +3031,29 @@ function findUnusedColor()
 	end
 end
 
+function sitPlayers()
+	for i, v in pairs(Player.getSpectators()) do
+		v.changeColor(MAIN_PLAYABLE_COLORS[i])
+	end
+end
+
 function shufflePlayers()
 	local sittingPlayerID = {}
 	local sittingPlayerColor = getSeatedPlayers()
 	for i, v in pairs(sittingPlayerColor) do
-		if (not getPlayerObj(v).host) or options.shuffleHost then
-			print(v)
+		if (not getPlayerObj(v).host) or options.shuffleHost then  -- this options.shuffleHost not working
+			sittingPlayerID[i] = Player[v].steam_id
+			Player[v].changeColor('Grey')
+		elseif (not getPlayerObj(v).host) then
 			sittingPlayerID[i] = Player[v].steam_id
 			Player[v].changeColor('Grey')
 		end
 	end
 
 	math.randomseed( os.time() )
-	for i = #sittingPlayerColor, 2, -1 do
-		for j = 1, 5, 1 do
-			local j = math.random(i)
-			sittingPlayerColor[i], sittingPlayerColor[j] = sittingPlayerColor[i], sittingPlayerColor[j]
-		end
+	for i = #sittingPlayerID, 2, -1 do
+		local j = math.random(i)
+		sittingPlayerColor[i], sittingPlayerColor[j] = sittingPlayerColor[j], sittingPlayerColor[i]
 	end
 
  	for i, v in pairs(sittingPlayerID) do
