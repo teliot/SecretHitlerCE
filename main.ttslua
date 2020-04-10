@@ -3029,27 +3029,28 @@ function findUnusedColor()
 end
 
 function shufflePlayers()
-	local playingColors = getSeatedPlayers()
-	local playingIDs = {}
-	for i, v in pairs(playingColors) do
-		if (not options.shuffleHost and getPlayerObj(v).host) then
-  		-- playingColors[i] = nil
-			table.remove(playingColors, i)
-  		break
-  	end
- 		playingIDs[i] = Player[v].steam_id
- 		Player[v].changeColor('Grey')
- 	end
+	local sittingPlayerID = {}
+	local sittingPlayerColor = getSeatedPlayers()
+	for i, v in pairs(sittingPlayerColor) do
+		if (not getPlayerObj(v).host) or options.shuffleHost then
+			print(v)
+			sittingPlayerID[i] = Player[v].steam_id
+			Player[v].changeColor('Grey')
+		end
+	end
 
- 	for i = #playingIDs, 2, -1 do
- 		local j = math.random(i)
- 		playingIDs[i], playingIDs[j] = playingIDs[j], playingIDs[i]
- 	end
+	math.randomseed( os.time() )
+	for i = #sittingPlayerColor, 2, -1 do
+		for j = 1, 5, 1 do
+			local j = math.random(i)
+			sittingPlayerColor[i], sittingPlayerColor[j] = sittingPlayerColor[i], sittingPlayerColor[j]
+		end
+	end
 
- 	for i, v in pairs(playingIDs) do
- 		getPlayerByNameSteamID(v, Player.getSpectators()).changeColor(playingColors[i])
- 	end
- 	--[[
+ 	for i, v in pairs(sittingPlayerID) do
+  	getPlayerByNameSteamID(v, Player.getSpectators()).changeColor(sittingPlayerColor[i])
+	end
+ 	--[[ 	--print(Player[v].steam_id)
 	local blackSteamId
 	if #getSeatedPlayers() == 10 and Player['Black'].seated then
 		blackSteamId = Player['Black'].steam_id
