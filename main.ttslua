@@ -3043,7 +3043,7 @@ function shufflePlayers()
 
  	for i = #playingIDs, 2, -1 do
  		local j = math.random(i)
- 		playingIDs[i], playingIDs[j] = playingIDs[i], playingIDs[j]
+ 		playingIDs[i], playingIDs[j] = playingIDs[j], playingIDs[i]
  	end
 
  	for i, v in pairs(playingIDs) do
